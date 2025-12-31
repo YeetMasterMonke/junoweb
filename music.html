@@ -1,0 +1,992 @@
+<head>
+  <meta charset="UTF-8">
+  <title>thisisjunoswebsite - Music</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+        background-image: url('Assets/Images/background.png'); /* Local path or full URL */
+    background-repeat: no-repeat;           /* Prevents the image from tiling */
+    background-size: cover;                 /* Scales image to cover the whole page */
+    background-position: center;            /* Centers the image */
+    background-attachment: fixed;          /* Keeps image fixed while scrolling */
+    
+      --text: #ffffff;
+      --muted: #ffffff;
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+  
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid #e5e5e5;
+      margin: 0;
+    }
+
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      justify-content: center;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--link);
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: var(--max-width);
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      margin-bottom: 24px;
+    }
+
+    .music-player {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 30px;
+      margin: 24px 0;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .album-cover {
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto 20px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .album-cover img {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0;
+    }
+
+    .player-info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .player-info h2 {
+      font-size: 18px;
+      margin: 10px 0;
+      color: var(--text);
+    }
+
+    .player-info p {
+      margin: 5px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .time-display {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin: 10px 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--link);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s linear;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background-color: var(--link);
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .control-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text);
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      transition: background-color 0.2s ease;
+    }
+
+    .control-btn:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .control-btn:active {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .album-selector {
+      margin-top: 20px;
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .album-selector select {
+      width: 100%;
+      padding: 8px;
+      background-color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: black;
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .song-list {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .song-item {
+      padding: 8px;
+      margin: 4px 0;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .song-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .song-item.active {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .fullscreen-player {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 10000;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .fullscreen-player.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fullscreen-content {
+      display: flex;
+      gap: 60px;
+      max-width: 1200px;
+      width: 100%;
+      align-items: center;
+      position: relative;
+    }
+
+    .fs-album-title-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .fs-album-title-container h2 {
+      flex: 0 1 auto;
+      margin: 0;
+    }
+
+    .fs-nav-arrow {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 32px;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 200ms ease;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .fs-nav-arrow:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: scale(1.1);
+    }
+
+    .fs-nav-arrow:active {
+      transform: scale(0.95);
+    }
+
+    .fullscreen-left {
+      flex: 0 0 400px;
+    }
+
+    .fs-album-cover {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+    }
+
+    .fullscreen-right {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fullscreen-right h2 {
+      font-size: 32px;
+      margin: 0 0 10px 0;
+      font-weight: normal;
+    }
+
+    .fullscreen-right p {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0 0 30px 0;
+    }
+
+    .fs-time-display {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0;
+    }
+
+    .fs-progress-bar {
+      width: 100%;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin: 10px 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .fs-progress-fill {
+      height: 100%;
+      background-color: var(--link);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s linear;
+      position: relative;
+    }
+
+    .fs-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background-color: var(--link);
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .fs-player-controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .fs-control-btn {
+      flex: 1;
+      padding: 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--link);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+
+    .fs-control-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .fs-song-list {
+      margin-top: 20px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .fs-song-item {
+      padding: 10px;
+      margin: 5px 0;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s ease;
+    }
+
+    .fs-song-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .fs-song-item.active {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .close-fullscreen {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background: none;
+      border: none;
+      color: var(--link);
+      font-size: 32px;
+      cursor: pointer;
+      z-index: 10001;
+      transition: opacity 0.2s ease;
+    }
+
+    .close-fullscreen:hover {
+      opacity: 0.7;
+    }
+
+    footer {
+      max-width: var(--max-width);
+      margin: 64px auto 32px;
+      padding: 0 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    /* Header shatter styles */
+    .shatter-clone { position: absolute; pointer-events: none; left: 0; top: 0; transform-origin: center; transition: transform 900ms cubic-bezier(.1,.7,.1,1), opacity 900ms linear; will-change: transform, opacity; white-space: pre; }
+    .shatter-hidden { visibility: hidden; }
+    html.preload #page-blink { opacity: 1; }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html" id="musicHeaderLink">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+
+    </nav>
+  </header>
+
+  <main>
+    <h1>Music</h1>
+
+    <div class="music-player">
+      <div class="album-cover">
+        <img id="albumCover" src="Music/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)/cover.png" alt="Album Cover">
+      </div>
+
+      <div class="player-info">
+        <h2 id="albumName">Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)</h2>
+        <p id="songName">GYROMETRIC BOUND</p>
+      </div>
+
+      <div class="time-display">
+        <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="player-controls">
+        <button class="control-btn" id="prevBtn">← Previous</button>
+        <button class="control-btn" id="playPauseBtn">▶ Play</button>
+        <button class="control-btn" id="nextBtn">Next →</button>
+      </div>
+
+      <div class="album-selector">
+        <label for="albumSelect" style="font-size: 12px; display: block; margin-bottom: 8px;">Album:</label>
+        <select id="albumSelect">
+          <option value="0">Sacrilegious Rebellion</option>
+          <option value="1">WHO IS JUNO- (SR- Vol 1.5)</option>
+          <option value="2">Outmakes and Outtakes (Vol.1)</option>
+          <option value="3">Sacrilegious Rebellion Vol- 2</option>
+        </select>
+      </div>
+
+      <div class="song-list" id="songList"></div>
+    </div>
+
+  </main>
+
+  <div id="fullscreenPlayer" class="fullscreen-player">
+    <button class="close-fullscreen" id="closeFullscreen">✕</button>
+    <div class="fullscreen-content">
+      <div class="fullscreen-left">
+        <img id="fsAlbumCover" src="" alt="Album Cover" class="fs-album-cover">
+      </div>
+      <div class="fullscreen-right">
+        <div class="fs-album-title-container">
+          <button class="fs-nav-arrow fs-prev-arrow" id="fsPrevArrow">&lt;</button>
+          <h2 id="fsAlbumName">Album Name</h2>
+          <button class="fs-nav-arrow fs-next-arrow" id="fsNextArrow">&gt;</button>
+        </div>
+        <p id="fsSongName">Song Name</p>
+        
+        <div class="fs-time-display">
+          <span id="fsCurrentTime">0:00</span> / <span id="fsDuration">0:00</span>
+        </div>
+
+        <div class="fs-progress-bar">
+          <div class="fs-progress-fill" id="fsProgressFill"></div>
+        </div>
+
+        <div class="fs-player-controls">
+          <button class="fs-control-btn" id="fsPrevBtn">← Previous</button>
+          <button class="fs-control-btn" id="fsPlayPauseBtn">▶ Play</button>
+          <button class="fs-control-btn" id="fsNextBtn">Next →</button>
+        </div>
+
+        <div class="fs-song-list" id="fsSongList"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p class="muted">© 2025 - thisisjunoswebsite</p>
+  </footer>
+
+  <div id="page-blink"></div>
+  <script>
+  var easterEggActive = false;
+  ;(function(){
+    var overlay = document.getElementById('page-blink');
+    document.documentElement.classList.remove('preload');
+    overlay.style.opacity = '0';
+    window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+    document.addEventListener('click', function(e){
+      if(easterEggActive) return;
+      var a = e.target.closest && e.target.closest('a');
+      if(!a) return;
+      var href = a.getAttribute('href');
+      if(!href) return;
+      if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+      e.preventDefault();
+      overlay.style.opacity = '1';
+      setTimeout(function(){ window.location = href; }, 260);
+    });
+  })();
+  </script>
+  <script>
+  ;(function(){
+    function shatterElementText(el){
+      if(!el || el.dataset.shattering) return;
+      var text = el.textContent || '';
+      if(!text.trim()) return;
+      el.dataset.shattering = '1';
+      var original = el.innerHTML;
+      el.innerHTML = '';
+      var spans = [];
+      for(var i=0;i<text.length;i++){
+        var ch = text[i];
+        var s = document.createElement('span');
+        s.textContent = ch;
+        s.style.whiteSpace = 'pre';
+        s.className = 'shatter-char';
+        el.appendChild(s);
+        spans.push(s);
+      }
+      var clones = [];
+      spans.forEach(function(s){
+        var r = s.getBoundingClientRect();
+        var c = s.cloneNode(true);
+        c.className = 'shatter-clone';
+        c.style.left = r.left + 'px';
+        c.style.top = r.top + 'px';
+        c.style.width = r.width + 'px';
+        c.style.height = r.height + 'px';
+        c.style.font = getComputedStyle(s).font;
+        c.style.color = getComputedStyle(s).color;
+        document.body.appendChild(c);
+        clones.push(c);
+        s.style.visibility = 'hidden';
+      });
+      clones.forEach(function(c){
+        var angle = Math.random()*Math.PI*2;
+        var dist = 60 + Math.random()*260;
+        var x = Math.cos(angle)*dist;
+        var y = Math.sin(angle)*dist + 40;
+        var rot = (Math.random()*360-180) + 'deg';
+        requestAnimationFrame(function(){
+          c.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + rot + ')';
+          c.style.opacity = '0';
+        });
+      });
+      setTimeout(function(){
+        clones.forEach(function(c){ if(c.parentNode) c.parentNode.removeChild(c); });
+        el.innerHTML = original;
+        delete el.dataset.shattering;
+      }, 1100);
+    }
+
+    document.querySelectorAll('header').forEach(function(header){
+      header.addEventListener('click', function(e){
+        var tgt = e.target.closest ? e.target.closest('a, h1') : null;
+        if(!tgt) return;
+        if(tgt.tagName === 'A' && tgt.getAttribute('href') && !tgt.getAttribute('href').startsWith('#')){
+          e.preventDefault();
+        }
+        shatterElementText(tgt);
+      });
+    });
+  })();
+  </script>
+
+  <script>
+  ;(function(){
+    const albums = [
+      {
+        name: "Sacrilegious Rebellion Vol. 1",
+        cover: "Music/Juno Sillys - Sacrilegious Rebellion/cover.png",
+        songs: [
+          { name: "An Obnoxious Intro", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 01 An Obnoxious Intro.mp3" },
+          { name: "BLEH ft. Vacaroni", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 02 BLEH ft. Vacaroni.mp3" },
+          { name: "I Will Never Let Go..", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 03 I Will Never Let Go..mp3" },
+          { name: "The Pickle Ball Song!", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 04 The Pickle Ball Song!.mp3" },
+          { name: "Jump In Celebration!", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 05 Jump In Celebration!.mp3" },
+          { name: "Asmodeus's Last Call", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 06 Asmodeus's Last Call.mp3" },
+          { name: "Paranoid", file: "Music/Juno Sillys - Sacrilegious Rebellion/Juno Sillys - Sacrilegious Rebellion - 07 Paranoid.mp3" }
+        ]
+      },
+      {
+        name: "WHO IS JUNO? (SR - Vol 1.5)",
+        cover: "Music/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)/cover.png",
+        songs: [
+          { name: "GYROMETRIC BOUND", file: "Music/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5) - 01 GYROMETRIC BOUND.mp3" },
+          { name: "MISCHIEVIOUS", file: "Music/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5) - 02 MISCHIEVIOUS.mp3" },
+          { name: "I LIED", file: "Music/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5)/Juno Sillys - WHO IS JUNO- (SR- Vol 1.5) - 03 I LIED.mp3" }
+        ]
+      },
+      {
+        name: "Outmakes and Outtakes (Vol.1)",
+        cover: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/cover.png",
+        songs: [
+          { name: "demolition", file: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/Juno Sillys - Outmakes and Outtakes (Vol.1) - 01 demolition.mp3" },
+          { name: "evilish", file: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/Juno Sillys - Outmakes and Outtakes (Vol.1) - 02 evilish.mp3" },
+          { name: "ijify2", file: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/Juno Sillys - Outmakes and Outtakes (Vol.1) - 03 ijify2.mp3" },
+          { name: "junodisintra", file: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/Juno Sillys - Outmakes and Outtakes (Vol.1) - 04 junodisintra.mp3" },
+          { name: "bongotime", file: "Music/Juno Sillys - Outmakes and Outtakes (Vol.1)/Juno Sillys - Outmakes and Outtakes (Vol.1) - 05 bongotime.mp3" }
+        ]
+      },
+      {
+        name: "Sacrilegious Rebellion Vol. 2",
+        cover: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/cover.png",
+        songs: [
+          { name: "Gyrometric Bound", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 01 Gyrometric Bound.mp3" },
+          { name: "All These Goddamn Radioactive Cats...", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/02 - All These Goddamn Radioactive Cats.mp3" },
+          { name: "Mischievous", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 03 Mischievous.mp3" },
+          { name: "Are We Finally Done Here-", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 04 Are We Finally Done Here-.mp3" },
+          { name: "Record Scratch - Nah", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 05 Record Scratch - Nah.mp3" },
+          { name: "CONTENDER OFFENDER", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 06 CONTENDER OFFENDER (Instrumental).mp3" },
+          { name: "The Hunt Is DEAD Ft. Noah Shorts", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 07 The Hunt Is DEAD Ft. Noah Shorts.mp3" },
+          { name: "the death of juno..", file: "Music/Juno Sillys - Sacrilegious Rebellion Vol- 2/Juno Sillys - Sacrilegious Rebellion Vol- 2 - 08 the death of juno..mp3" }
+        ]
+      }
+    ];
+
+    let currentAlbumIndex = 0;
+    let currentSongIndex = 0;
+    let isPlaying = false;
+    let audio = new Audio();
+
+    const albumCover = document.getElementById('albumCover');
+    const albumName = document.getElementById('albumName');
+    const songName = document.getElementById('songName');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.querySelector('.progress-bar');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const albumSelect = document.getElementById('albumSelect');
+    const songList = document.getElementById('songList');
+
+    function formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+
+    function loadAlbum(index) {
+      currentAlbumIndex = index;
+      currentSongIndex = 0;
+      const album = albums[index];
+      albumCover.src = album.cover;
+      albumName.textContent = album.name;
+      fsAlbumCover.src = album.cover;
+      fsAlbumName.textContent = album.name;
+      albumSelect.value = index;
+      loadSongList();
+      loadSong();
+    }
+
+    function loadSong() {
+      const song = albums[currentAlbumIndex].songs[currentSongIndex];
+      audio.src = song.file;
+      songName.textContent = song.name;
+      fsSongName.textContent = song.name;
+      fsAlbumName.textContent = albums[currentAlbumIndex].name;
+      albumName.textContent = albums[currentAlbumIndex].name;
+      updateSongList();
+      updateFSSongList();
+      audio.load();
+    }
+
+    function loadSongList() {
+      songList.innerHTML = '';
+      albums[currentAlbumIndex].songs.forEach((song, idx) => {
+        const songEl = document.createElement('div');
+        songEl.className = 'song-item' + (idx === currentSongIndex ? ' active' : '');
+        songEl.textContent = (idx + 1) + '. ' + song.name;
+        songEl.addEventListener('click', function() {
+          currentSongIndex = idx;
+          loadSong();
+          play();
+        });
+        songList.appendChild(songEl);
+      });
+    }
+
+    function updateSongList() {
+      document.querySelectorAll('.song-item').forEach((el, idx) => {
+        el.classList.toggle('active', idx === currentSongIndex);
+      });
+    }
+
+    function play() {
+      audio.play();
+      isPlaying = true;
+      playPauseBtn.textContent = '⏸ Pause';
+      fsPlayPauseBtn.textContent = '⏸ Pause';
+    }
+
+    function pause() {
+      audio.pause();
+      isPlaying = false;
+      playPauseBtn.textContent = '▶ Play';
+      fsPlayPauseBtn.textContent = '▶ Play';
+    }
+
+    function togglePlayPause() {
+      isPlaying ? pause() : play();
+    }
+
+    function nextSong() {
+      currentSongIndex = (currentSongIndex + 1) % albums[currentAlbumIndex].songs.length;
+      loadSong();
+      play();
+    }
+
+    function prevSong() {
+      currentSongIndex = (currentSongIndex - 1 + albums[currentAlbumIndex].songs.length) % albums[currentAlbumIndex].songs.length;
+      loadSong();
+      play();
+    }
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    nextBtn.addEventListener('click', nextSong);
+    prevBtn.addEventListener('click', prevSong);
+    albumSelect.addEventListener('change', function(e) {
+      loadAlbum(parseInt(e.target.value));
+    });
+
+    audio.addEventListener('timeupdate', function() {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = percent + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener('loadedmetadata', function() {
+      durationEl.textContent = formatTime(audio.duration);
+      fsDurationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', nextSong);
+
+    let isDragging = false;
+    
+    progressBar.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      seekTo(e);
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (isDragging) {
+        seekTo(e);
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDragging = false;
+    });
+
+    function seekTo(e) {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audio.currentTime = percent * audio.duration;
+    }
+
+    progressBar.addEventListener('click', function(e) {
+      seekTo(e);
+    });
+
+    // Fullscreen player functionality
+    const fullscreenPlayer = document.getElementById('fullscreenPlayer');
+    const albumCoverImg = document.getElementById('albumCover');
+    const closeFullscreenBtn = document.getElementById('closeFullscreen');
+    const fsAlbumCover = document.getElementById('fsAlbumCover');
+    const fsAlbumName = document.getElementById('fsAlbumName');
+    const fsSongName = document.getElementById('fsSongName');
+    const fsPlayPauseBtn = document.getElementById('fsPlayPauseBtn');
+    const fsPrevBtn = document.getElementById('fsPrevBtn');
+    const fsNextBtn = document.getElementById('fsNextBtn');
+    const fsCurrentTimeEl = document.getElementById('fsCurrentTime');
+    const fsDurationEl = document.getElementById('fsDuration');
+    const fsProgressBar = document.querySelector('.fs-progress-bar');
+    const fsProgressFill = document.getElementById('fsProgressFill');
+    const fsSongList = document.getElementById('fsSongList');
+
+    albumCoverImg.addEventListener('click', function() {
+      fullscreenPlayer.classList.add('active');
+      updateFullscreenPlayer();
+    });
+
+    closeFullscreenBtn.addEventListener('click', function() {
+      fullscreenPlayer.classList.remove('active');
+    });
+
+    fsAlbumCover.addEventListener('click', function() {
+      fullscreenPlayer.classList.remove('active');
+    });
+
+    function updateFullscreenPlayer() {
+      const currentAlbum = albums[currentAlbumIndex];
+      fsAlbumName.textContent = currentAlbum.name;
+      fsSongName.textContent = currentAlbum.songs[currentSongIndex].name;
+      fsAlbumCover.src = currentAlbum.cover;
+      fsPlayPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      
+      renderFSSongList();
+    }
+
+    function renderFSSongList() {
+      fsSongList.innerHTML = '';
+      const currentAlbum = albums[currentAlbumIndex];
+      currentAlbum.songs.forEach((song, index) => {
+        const item = document.createElement('div');
+        item.className = 'fs-song-item' + (index === currentSongIndex ? ' active' : '');
+        item.textContent = song.name;
+        item.addEventListener('click', function() {
+          currentSongIndex = index;
+          loadSong(currentSongIndex);
+          play();
+          updateFullscreenPlayer();
+        });
+        fsSongList.appendChild(item);
+      });
+    }
+
+    fsPlayPauseBtn.addEventListener('click', togglePlayPause);
+    fsNextBtn.addEventListener('click', nextSong);
+    fsPrevBtn.addEventListener('click', prevSong);
+
+    // Arrow button listeners - navigate albums
+    document.getElementById('fsPrevArrow').addEventListener('click', function() {
+      currentAlbumIndex = (currentAlbumIndex - 1 + albums.length) % albums.length;
+      loadAlbum(currentAlbumIndex);
+      updateFullscreenPlayer();
+    });
+    document.getElementById('fsNextArrow').addEventListener('click', function() {
+      currentAlbumIndex = (currentAlbumIndex + 1) % albums.length;
+      loadAlbum(currentAlbumIndex);
+      updateFullscreenPlayer();
+    });
+
+    // Sync fullscreen progress bar
+    fsProgressBar.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      seekToFS(e);
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (isDragging && fullscreenPlayer.classList.contains('active')) {
+        seekToFS(e);
+      }
+    });
+
+    function seekToFS(e) {
+      const rect = fsProgressBar.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audio.currentTime = percent * audio.duration;
+    }
+
+    fsProgressBar.addEventListener('click', function(e) {
+      seekToFS(e);
+    });
+
+    // Update fullscreen player when main player updates
+    const originalPlay = play;
+    const originalPause = pause;
+    const originalToggle = togglePlayPause;
+
+    function updateAllPlayerUI() {
+      fsPlayPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      playPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      fsAlbumName.textContent = albums[currentAlbumIndex].name;
+      fsAlbumCover.src = albums[currentAlbumIndex].cover;
+      fsSongName.textContent = albums[currentAlbumIndex].songs[currentSongIndex].name;
+      albumName.textContent = albums[currentAlbumIndex].name;
+      songName.textContent = albums[currentAlbumIndex].songs[currentSongIndex].name;
+      albumCover.src = albums[currentAlbumIndex].cover;
+      updateFSSongList();
+      renderSongList();
+    }
+
+    function updateFSSongList() {
+      document.querySelectorAll('.fs-song-item').forEach((item, index) => {
+        if (index === currentSongIndex) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    // Override audio event listeners
+    audio.addEventListener('timeupdate', function() {
+      if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = percent + '%';
+        fsProgressFill.style.width = percent + '%';
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+        fsCurrentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    // Easter egg: Secret album download
+    const musicHeaderLink = document.getElementById('musicHeaderLink');
+    
+    musicHeaderLink.addEventListener('click', function(e) {
+      if (currentAlbumIndex === 1 && currentSongIndex === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        easterEggActive = true;
+        const link = document.createElement('a');
+        link.href = 'Music/secretalbum.zip';
+        link.download = 'secretalbum.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => { easterEggActive = false; }, 100);
+        return false;
+      }
+    }, true);
+
+    loadAlbum(0);
+  })();
+  </script>

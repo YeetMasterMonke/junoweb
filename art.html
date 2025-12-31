@@ -1,0 +1,538 @@
+<head>
+  <meta charset="UTF-8">
+  <title>thisisjunoswebsite - Art</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+
+      
+
+
+    }
+    :root {
+        background-image: url('Assets/Images/background.png'); /* Local path or full URL */
+    background-repeat: no-repeat;           /* Prevents the image from tiling */
+    background-size: cover;                 /* Scales image to cover the whole page */
+    background-position: center;            /* Centers the image */
+    background-attachment: fixed;          /* Keeps image fixed while scrolling */
+    
+      --text: #ffffff;
+      --muted: #ffffff;
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+
+      
+  
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid #e5e5e5;
+      margin: 0;
+    }
+
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      justify-content: center;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--link);
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 100%;
+      margin: 48px 0;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .art-gallery {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      width: 100%;
+      padding: 12px;
+      max-width: 100%;
+      margin: 0;
+    }
+
+    .art-item {
+      text-align: center;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .art-item img {
+      width: 100%;
+      height: auto;
+      margin: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      display: block;
+    }
+
+    .art-item img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .modal-close {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      z-index: 10001;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .modal-close:hover {
+      color: #ccc;
+    }
+
+    .modal-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      padding: 40px;
+      gap: 40px;
+    }
+
+    .modal-description {
+      flex: 0 0 25%;
+      color: white;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-y: auto;
+      max-height: 90vh;
+      padding-right: 20px;
+    }
+
+    .modal-image-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      width: 100%;
+    }
+
+    .modal-content {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .modal-name {
+      color: white;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 80px;
+      text-align: center;
+    }
+
+    .modal-nav {
+      display: flex;
+      gap: 30px;
+      position: absolute;
+      bottom: 30px;
+      align-items: center;
+    }
+
+    .modal-button {
+      background-color: rgba(255, 255, 255, 0.3);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border-radius: 4px;
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+    }
+
+    .modal-button:hover {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .modal-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    /* Header shatter styles */
+    .shatter-clone { position: absolute; pointer-events: none; left: 0; top: 0; transform-origin: center; transition: transform 900ms cubic-bezier(.1,.7,.1,1), opacity 900ms linear; will-change: transform, opacity; white-space: pre; }
+    .shatter-hidden { visibility: hidden; }
+    html.preload #page-blink { opacity: 1; }
+
+    footer {
+      max-width: var(--max-width);
+      margin: 64px auto 32px;
+      padding: 0 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+
+    </nav>
+  </header>
+
+  <main>
+    <h1>Art</h1>
+
+    <div class="art-gallery">
+      <div class="art-item">
+        <img src="Art/tilde.png" alt="tilde" data-description="Bad Breakup, Second drawing i made after the fact.">
+        <p class="muted">tilde</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/The Homicidal Intern.png" alt="The Homicidal Intern" data-description="i forgot when and why i made this">
+        <p class="muted">The Homicidal Intern</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Self-Ish Fan art.jpg" alt="Self-Ish Fan art" data-description="YEAH WILL WOOD, we love him <3">
+        <p class="muted">Self-Ish Fan art</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Pipeline Dream.jpg" alt="Pipeline Dream" data-description="Latest Drawing Ive Done, Quote Is From Ramshackle Glory's First Song, Part 2">
+        <p class="muted">Pipeline Dream</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Old Fursona.png" alt="Old Fursona" data-description="Old Fursona i made, like late 2024">
+        <p class="muted">Old Fursona</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Lysergyso.jpg" alt="Lysergyso" data-description="One Of My first attempts at phycodelic art">
+        <p class="muted">Lysergyso</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Liminal Vortex.jpg" alt="Liminal Vortex" data-description="Drew Thhis During State testing! Got Introuble for having my sketch book though.">
+        <p class="muted">Liminal Vortex</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Inasnity Caused By Partnership.png" alt="Inasnity Caused By Partnership" data-description="Bad Breakup, Drawing helped a bit.">
+        <p class="muted">Inasnity Caused By Partnership</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/hindsight.jpg" alt="hindsight" data-description="Drew This all the way back in 2024! spent time working on this while i was in ISS">
+        <p class="muted">hindsight</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Emotional Distress.png" alt="Emotional Distress" data-description="Drew this while extremely homesick">
+        <p class="muted">Emotional Distress</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/AstrixFinished.png" alt="AstrixFinished" data-description="Astrix! its him! Used ALT version On My Album, Sacrilegious Rebbellion Vol: 1">
+        <p class="muted">AstrixFinished</p>
+      </div>
+
+      <div class="art-item">
+        <img src="Art/Astrix Ref Sheet.png" alt="Astrix Ref Sheet" data-description="Latest Astrix reference sheet!">
+        <p class="muted">Astrix Ref Sheet</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p class="muted"></p>
+  </footer>
+
+  <!-- Fullscreen Modal -->
+  <div id="imageModal" class="modal">
+    <span class="modal-close">&times;</span>
+    <div class="modal-container">
+      <div class="modal-description">
+        <h2 id="modalNameSide" style="margin-top: 0; color: white; font-size: 20px;"></h2>
+        <p id="modalDesc" style="color: #ccc;"></p>
+      </div>
+      <div class="modal-image-wrapper">
+        <img class="modal-content" id="modalImage" src="" alt="">
+      </div>
+      <div style="flex: 0 0 25%;"></div>
+    </div>
+    <div style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 30px;">
+      <button class="modal-button" id="prevBtn">← Previous</button>
+      <button class="modal-button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalNameSide = document.getElementById('modalNameSide');
+    const modalDesc = document.getElementById('modalDesc');
+    const closeBtn = document.querySelector('.modal-close');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const galleryImages = document.querySelectorAll('.art-item img');
+    
+    let currentImageIndex = 0;
+    const images = Array.from(galleryImages);
+
+    function updateModal(index) {
+      currentImageIndex = index;
+      const img = images[currentImageIndex];
+      modalImage.src = img.src;
+      modalImage.alt = img.alt;
+      modalNameSide.textContent = img.alt;
+      modalDesc.textContent = img.getAttribute('data-description') || 'No description available.';
+      
+      // Update button states
+      prevBtn.disabled = currentImageIndex === 0;
+      nextBtn.disabled = currentImageIndex === images.length - 1;
+    }
+
+    // Open modal when clicking an image
+    galleryImages.forEach((img, index) => {
+      img.addEventListener('click', function() {
+        modal.classList.add('active');
+        updateModal(index);
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Navigation buttons
+    prevBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (currentImageIndex > 0) {
+        updateModal(currentImageIndex - 1);
+      }
+    });
+
+    nextBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (currentImageIndex < images.length - 1) {
+        updateModal(currentImageIndex + 1);
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (!modal.classList.contains('active')) return;
+      
+      if (e.key === 'Escape') {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      } else if (e.key === 'ArrowLeft' && currentImageIndex > 0) {
+        updateModal(currentImageIndex - 1);
+      } else if (e.key === 'ArrowRight' && currentImageIndex < images.length - 1) {
+        updateModal(currentImageIndex + 1);
+      }
+    });
+
+    // Close modal when clicking the X button
+    closeBtn.addEventListener('click', function() {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close modal when clicking outside the image
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+  </script>
+
+  <div id="page-blink"></div>
+  <script>
+  ;(function(){
+    var overlay = document.getElementById('page-blink');
+    document.documentElement.classList.remove('preload');
+    overlay.style.opacity = '0';
+    window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a');
+      if(!a) return;
+      var href = a.getAttribute('href');
+      if(!href) return;
+      if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+      e.preventDefault();
+      overlay.style.opacity = '1';
+      setTimeout(function(){ window.location = href; }, 260);
+    });
+  })();
+  </script>
+  <script>
+  ;(function(){
+    function shatterElementText(el){
+      if(!el || el.dataset.shattering) return;
+      var text = el.textContent || '';
+      if(!text.trim()) return;
+      el.dataset.shattering = '1';
+      var original = el.innerHTML;
+      el.innerHTML = '';
+      var spans = [];
+      for(var i=0;i<text.length;i++){
+        var ch = text[i];
+        var s = document.createElement('span');
+        s.textContent = ch;
+        s.style.whiteSpace = 'pre';
+        s.className = 'shatter-char';
+        el.appendChild(s);
+        spans.push(s);
+      }
+      var clones = [];
+      spans.forEach(function(s){
+        var r = s.getBoundingClientRect();
+        var c = s.cloneNode(true);
+        c.className = 'shatter-clone';
+        c.style.left = r.left + 'px';
+        c.style.top = r.top + 'px';
+        c.style.width = r.width + 'px';
+        c.style.height = r.height + 'px';
+        c.style.font = getComputedStyle(s).font;
+        c.style.color = getComputedStyle(s).color;
+        document.body.appendChild(c);
+        clones.push(c);
+        s.style.visibility = 'hidden';
+      });
+      clones.forEach(function(c){
+        var angle = Math.random()*Math.PI*2;
+        var dist = 60 + Math.random()*260;
+        var x = Math.cos(angle)*dist;
+        var y = Math.sin(angle)*dist + 40;
+        var rot = (Math.random()*360-180) + 'deg';
+        requestAnimationFrame(function(){
+          c.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + rot + ')';
+          c.style.opacity = '0';
+        });
+      });
+      setTimeout(function(){
+        clones.forEach(function(c){ if(c.parentNode) c.parentNode.removeChild(c); });
+        el.innerHTML = original;
+        delete el.dataset.shattering;
+      }, 1100);
+    }
+
+    document.querySelectorAll('header').forEach(function(header){
+      header.addEventListener('click', function(e){
+        var tgt = e.target.closest ? e.target.closest('a, h1') : null;
+        if(!tgt) return;
+        if(tgt.tagName === 'A' && tgt.getAttribute('href') && !tgt.getAttribute('href').startsWith('#')){
+          e.preventDefault();
+        }
+        shatterElementText(tgt);
+      });
+    });
+  })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bandcamp — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face { font-family: 'Cascadia Mono'; src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode'); font-weight: 100 900; font-style: normal; font-display: swap; }
+    :root { --bg: transparent; --text: #ffffff; --muted: rgba(255,255,255,0.85); --link: #ffffff; --max-width: 720px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background-color: var(--bg); color: var(--text); font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; line-height: 1.6; text-align: center; background-image: url('Assets/Images/background.png'); background-repeat: no-repeat; background-size: cover; background-position: center; background-attachment: fixed; }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 0 24px; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; }
+    p { margin-bottom: 20px; color: var(--text); }
+    .bandcamp-list { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .bandcamp-link { display: inline-block; padding: 12px 24px; background: rgba(255,255,255,0.1); border-radius: 6px; text-decoration: none; color: var(--link); transition: background 200ms ease; }
+    .bandcamp-link:hover { background: rgba(255,255,255,0.2); }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    /* Header shatter styles */
+    .shatter-clone { position: absolute; pointer-events: none; left: 0; top: 0; transform-origin: center; transition: transform 900ms cubic-bezier(.1,.7,.1,1), opacity 900ms linear; will-change: transform, opacity; white-space: pre; }
+    .shatter-hidden { visibility: hidden; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Bandcamp</h1>
+    <p class="muted">My music on Bandcamp</p>
+    
+    <div class="bandcamp-list">
+      <a href="https://cheapwinehangover.bandcamp.com/" class="bandcamp-link">Cheapwine Hangover</a>
+      <a href="https://junoisverysilly.bandcamp.com/" class="bandcamp-link">Juno Sillys</a>
+      <a href="https://crimsonxero.bandcamp.com/" class="bandcamp-link">Crimson Xero</a>
+    </div>
+    
+    <p><a href="socials.html">← Back to Socials</a></p>
+  </main>
+  <footer>
+    <p class="muted"></p>
+  </footer>
+  <div id="page-blink"></div>
+</body>
+
+<script>
+;(function(){
+  var overlay = document.getElementById('page-blink');
+  if(!overlay) return;
+  overlay.style.opacity = '0';
+  window.addEventListener('DOMContentLoaded', function(){ overlay.style.opacity = '0'; document.body.classList.add('loaded'); });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if(!a) return;
+    var href = a.getAttribute('href');
+    if(!href) return;
+    if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+    e.preventDefault();
+    overlay.style.opacity = '1';
+    setTimeout(function(){ window.location = href; }, 260);
+  });
+})();
+</script>
+<script>
+;(function(){
+  function shatterElementText(el){
+    if(!el || el.dataset.shattering) return;
+    var text = el.textContent || '';
+    if(!text.trim()) return;
+    el.dataset.shattering = '1';
+    var original = el.innerHTML;
+    el.innerHTML = '';
+    var spans = [];
+    for(var i=0;i<text.length;i++){
+      var ch = text[i];
+      var s = document.createElement('span');
+      s.textContent = ch;
+      s.style.whiteSpace = 'pre';
+      s.className = 'shatter-char';
+      el.appendChild(s);
+      spans.push(s);
+    }
+    var clones = [];
+    spans.forEach(function(s){
+      var r = s.getBoundingClientRect();
+      var c = s.cloneNode(true);
+      c.className = 'shatter-clone';
+      c.style.left = r.left + 'px';
+      c.style.top = r.top + 'px';
+      c.style.width = r.width + 'px';
+      c.style.height = r.height + 'px';
+      c.style.font = getComputedStyle(s).font;
+      c.style.color = getComputedStyle(s).color;
+      document.body.appendChild(c);
+      clones.push(c);
+      s.style.visibility = 'hidden';
+    });
+    clones.forEach(function(c){
+      var angle = Math.random()*Math.PI*2;
+      var dist = 60 + Math.random()*260;
+      var x = Math.cos(angle)*dist;
+      var y = Math.sin(angle)*dist + 40;
+      var rot = (Math.random()*360-180) + 'deg';
+      requestAnimationFrame(function(){
+        c.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + rot + ')';
+        c.style.opacity = '0';
+      });
+    });
+    setTimeout(function(){
+      clones.forEach(function(c){ if(c.parentNode) c.parentNode.removeChild(c); });
+      el.innerHTML = original;
+      delete el.dataset.shattering;
+    }, 1100);
+  }
+
+  document.querySelectorAll('header').forEach(function(header){
+    header.addEventListener('click', function(e){
+      var tgt = e.target.closest ? e.target.closest('a, h1') : null;
+      if(!tgt) return;
+      if(tgt.tagName === 'A' && tgt.getAttribute('href') && !tgt.getAttribute('href').startsWith('#')){
+        e.preventDefault();
+      }
+      shatterElementText(tgt);
+    });
+  });
+})();
+</script>
+
+</html>

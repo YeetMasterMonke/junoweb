@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>About — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: transparent;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.85);
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background-image: url('Assets/Images/background.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 0 24px; text-align: center; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; color: #fff; }
+    p { margin-bottom: 12px; color: var(--muted); }
+    .bio { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 8px; color: #fff; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+    /* Header shatter styles */
+    .shatter-clone { position: absolute; pointer-events: none; left: 0; top: 0; transform-origin: center; transition: transform 900ms cubic-bezier(.1,.7,.1,1), opacity 900ms linear; will-change: transform, opacity; white-space: pre; }
+    .shatter-hidden { visibility: hidden; }
+
+    /* Bio falling letters */
+    .fall-letter { display: inline; cursor: pointer; white-space: normal; }
+    .fallen-letter { position: fixed; pointer-events: none; will-change: transform, opacity; z-index: 10003; }
+    
+    /* Fixed position image */
+    .fixed-img { position: fixed; bottom: 0; left: 0; width: 300px; height: auto; z-index: 10000; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  <main>
+    <h1>About Me</h1>
+    <div class="bio">
+      <p>Hi Im Juno! i like to do things i think.</p>
+      <p>I play Guitar, Write Songs, And Do Vocals in Cheapwine Hangover. Make Solo MIDI Music Under The Name "Juno Sillys" Or Do My part in "Crimson Xero"</p>
+      <p>I Like to draw and make art, i actually drew the background! most art for cheapwine will likely be drawn by me.</p>
+      <p>I Have Quite The Music Taste. Folk Punk has me on a leash. My favorite bands have to be "Ramshackle Glory", "Asking For It", "This Is A Robbery", "Johnny Hobo and the Freight Trains", Or "The Anorexic Olsen Twin"<p>
+      <p>Feel Free to Reach Out on Socials!</p>
+    </div>
+    <img src="Assets/Images/guy.png" alt="guy" class="fixed-img">
+  </main>
+  <footer>
+    <p class="muted"><span id="yap-easter-egg" style="cursor: pointer;">fuck i talk too much.</span></p>
+  </footer>
+</body>
+
+<div id="page-blink"></div>
+<script>
+;(function(){
+  var overlay = document.getElementById('page-blink');
+  document.documentElement.classList.remove('preload');
+  overlay.style.opacity = '0';
+  window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if(!a) return;
+    var href = a.getAttribute('href');
+    if(!href) return;
+    if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+    e.preventDefault();
+    overlay.style.opacity = '1';
+    setTimeout(function(){ window.location = href; }, 260);
+  });
+})();
+</script>
+<script>
+;(function(){
+  function shatterElementText(el){
+    if(!el || el.dataset.shattering) return;
+    var text = el.textContent || '';
+    if(!text.trim()) return;
+    el.dataset.shattering = '1';
+    var original = el.innerHTML;
+    // build spans for each character
+    el.innerHTML = '';
+    var spans = [];
+    for(var i=0;i<text.length;i++){
+      var ch = text[i];
+      var s = document.createElement('span');
+      s.textContent = ch;
+      s.style.whiteSpace = 'pre';
+      s.className = 'shatter-char';
+      el.appendChild(s);
+      spans.push(s);
+    }
+    // create clones positioned on the page
+    var clones = [];
+    spans.forEach(function(s){
+      var r = s.getBoundingClientRect();
+      var c = s.cloneNode(true);
+      c.className = 'shatter-clone';
+      c.style.left = r.left + 'px';
+      c.style.top = r.top + 'px';
+      c.style.width = r.width + 'px';
+      c.style.height = r.height + 'px';
+      c.style.font = getComputedStyle(s).font;
+      c.style.color = getComputedStyle(s).color;
+      document.body.appendChild(c);
+      clones.push(c);
+      s.style.visibility = 'hidden';
+    });
+    // animate
+    clones.forEach(function(c){
+      var angle = Math.random()*Math.PI*2;
+      var dist = 60 + Math.random()*260;
+      var x = Math.cos(angle)*dist;
+      var y = Math.sin(angle)*dist + 40;
+      var rot = (Math.random()*360-180) + 'deg';
+      requestAnimationFrame(function(){
+        c.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + rot + ')';
+        c.style.opacity = '0';
+      });
+    });
+    setTimeout(function(){
+      clones.forEach(function(c){ if(c.parentNode) c.parentNode.removeChild(c); });
+      el.innerHTML = original;
+      delete el.dataset.shattering;
+    }, 1100);
+  }
+
+  document.querySelectorAll('header').forEach(function(header){
+    header.addEventListener('click', function(e){
+      var tgt = e.target.closest ? e.target.closest('a, h1') : null;
+      if(!tgt) return;
+      // prevent link navigation so the shatter is visible
+      if(tgt.tagName === 'A' && tgt.getAttribute('href') && !tgt.getAttribute('href').startsWith('#')){
+        e.preventDefault();
+      }
+      shatterElementText(tgt);
+    });
+  });
+})();
+</script>
+<script>
+;(function(){
+  // Turn bio text into clickable letters and make clicked letters fall to bottom
+  function wrapBioLetters(){
+    var bios = document.querySelectorAll('.bio');
+    bios.forEach(function(bio){
+      // process each paragraph inside bio
+      var ps = Array.from(bio.querySelectorAll('p'));
+      if(ps.length === 0){
+        // if direct text children, wrap the whole bio
+        ps = [bio];
+      }
+      ps.forEach(function(p){
+        // skip already-processed
+        if(p.dataset.lettersWrapped) return;
+        p.dataset.lettersWrapped = '1';
+        var text = p.textContent || '';
+        p.innerHTML = '';
+        for(var i=0;i<text.length;i++){
+          var ch = text[i];
+          var span = document.createElement('span');
+          span.className = 'fall-letter';
+          span.textContent = ch;
+          p.appendChild(span);
+        }
+      });
+    });
+  }
+
+  var fallingLetters = []; // global registry of active falling letters
+
+  function makeFallenLetter(span){
+    var r = span.getBoundingClientRect();
+    var bio = span.closest('.bio') || document.body;
+    var bioRect = bio.getBoundingClientRect();
+    var clone = span.cloneNode(true);
+    clone.className = 'fallen-letter';
+    // position fixed so we can animate relative to viewport
+    clone.style.left = r.left + 'px';
+    clone.style.top = r.top + 'px';
+    clone.style.font = getComputedStyle(span).font;
+    clone.style.color = getComputedStyle(span).color;
+    clone.style.opacity = '1';
+    clone.style.pointerEvents = 'none'; // disabled during fall
+    document.body.appendChild(clone);
+    span.style.visibility = 'hidden';
+
+    // physics params
+    var x = r.left;
+    var y = r.top;
+    var w = r.width;
+    var h = r.height;
+    var vx = (Math.random() - 0.5) * 2.6; // horizontal velocity px/frame
+    var vy = 0; // vertical velocity
+    var angle = (Math.random()*40 - 20); // degrees
+    var omega = (Math.random() - 0.5) * 0.6; // angular velocity deg/frame
+    var g = 0.55 + Math.random()*0.4; // gravity
+    var bounce = 0.7 + Math.random()*0.15; // stronger bounce damping (bouncier)
+    var floor = bioRect.top + bioRect.height - (r.height/2) - 4; // allow letter to sit inside bio
+    var leftBound = bioRect.left;
+    var rightBound = bioRect.right - r.width;
+    var settled = false;
+
+    var letterObj = { x: x, y: y, w: w, h: h, vx: vx, vy: vy };
+    fallingLetters.push(letterObj);
+
+    function duplicateFallenLetter(){
+      // Create a clone of the current clone and start it falling from current position
+      var dupClone = clone.cloneNode(true);
+      dupClone.className = 'fallen-letter';
+      var currentRect = clone.getBoundingClientRect();
+      dupClone.style.left = currentRect.left + 'px';
+      dupClone.style.top = currentRect.top + 'px';
+      dupClone.style.transform = 'translate(0px,0px)';
+      document.body.appendChild(dupClone);
+      
+      // Physics for duplicate
+      var dx = currentRect.left;
+      var dy = currentRect.top;
+      var dstartX = currentRect.left;
+      var dstartY = currentRect.top;
+      var dvx = (Math.random() - 0.5) * 2.6;
+      var dvy = 0;
+      var dangle = (Math.random()*40 - 20);
+      var domega = (Math.random() - 0.5) * 0.6;
+      var dsettled = false;
+      var dupObj = { x: dx, y: dy, w: w, h: h, vx: dvx, vy: dvy };
+      fallingLetters.push(dupObj);
+
+      function dupStep(){
+        if(dsettled) return;
+        dvy += g;
+        dx += dvx;
+        dy += dvy;
+        if(dx < leftBound){ dx = leftBound; dvx = -dvx * 0.6; }
+        if(dx > rightBound){ dx = rightBound; dvx = -dvx * 0.6; }
+        for(var i=0; i<fallingLetters.length; i++){
+          var other = fallingLetters[i];
+          if(other === dupObj) continue;
+          var dx2 = (dx + w/2) - (other.x + other.w/2);
+          var dy2 = (dy + h/2) - (other.y + other.h/2);
+          var dist = Math.sqrt(dx2*dx2 + dy2*dy2);
+          var minDist = Math.max(w, h) * 0.6;
+          if(dist < minDist && dist > 0){
+            var force = (minDist - dist) * 0.15;
+            var nx = dx2 / dist;
+            var ny = dy2 / dist;
+            dvx += nx * force;
+            dvy += ny * force;
+            other.vx -= nx * force * 0.5;
+            other.vy -= ny * force * 0.5;
+          }
+        }
+        if(dy >= floor){
+          dy = floor;
+          dvy = -dvy * bounce;
+          dvx = dvx * 0.9;
+          domega = -domega * 0.6 + (dvx * 0.06);
+          if(Math.abs(dvy) < 2 && Math.abs(dvx) < 0.6){
+            dsettled = true;
+            dupClone.style.left = dx + 'px';
+            dupClone.style.top = dy + 'px';
+            dupClone.style.transform = 'translate(0px,0px) rotate(' + dangle.toFixed(1) + 'deg)';
+            fallingLetters.splice(fallingLetters.indexOf(dupObj), 1);
+            dupClone.style.pointerEvents = 'auto';
+            return;
+          }
+        }
+        domega *= 0.995;
+        dangle += domega;
+        var dtx = dx - dstartX;
+        var dty = dy - dstartY;
+        dupClone.style.transform = 'translate(' + dtx + 'px, ' + dty + 'px) rotate(' + dangle.toFixed(2) + 'deg)';
+        dupObj.x = dx;
+        dupObj.y = dy;
+        dupObj.vx = dvx;
+        dupObj.vy = dvy;
+        requestAnimationFrame(dupStep);
+      }
+      
+      dupClone.style.pointerEvents = 'none';
+      dupClone.addEventListener('click', function(e){
+        e.stopPropagation();
+        duplicateFallenLetter();
+      });
+      requestAnimationFrame(dupStep);
+    }
+
+    function step(){
+      if(settled) return;
+      vy += g;
+      x += vx;
+      y += vy;
+      // horizontal bounds: bounce
+      if(x < leftBound){ x = leftBound; vx = -vx * 0.6; }
+      if(x > rightBound){ x = rightBound; vx = -vx * 0.6; }
+      // collision with other letters
+      for(var i=0; i<fallingLetters.length; i++){
+        var other = fallingLetters[i];
+        if(other === letterObj) continue;
+        var dx = (x + w/2) - (other.x + other.w/2);
+        var dy = (y + h/2) - (other.y + other.h/2);
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        var minDist = Math.max(w, h) * 0.6;
+        if(dist < minDist && dist > 0){
+          var force = (minDist - dist) * 0.15;
+          var nx = dx / dist;
+          var ny = dy / dist;
+          vx += nx * force;
+          vy += ny * force;
+          other.vx -= nx * force * 0.5;
+          other.vy -= ny * force * 0.5;
+        }
+      }
+      // floor collision
+      if(y >= floor){
+        y = floor;
+        vy = -vy * bounce;
+        vx = vx * 0.9; // friction
+        // impart some rotational change on bounce
+        omega = -omega * 0.6 + (vx * 0.06);
+        // if small bounce and low horizontal speed, settle (allow visible bounces)
+        if(Math.abs(vy) < 2 && Math.abs(vx) < 0.6){
+          settled = true;
+          clone.style.left = x + 'px';
+          clone.style.top = y + 'px';
+          clone.style.transform = 'translate(0px,0px) rotate(' + angle.toFixed(1) + 'deg)';
+          clone.style.pointerEvents = 'auto'; // enable clicking when settled
+          letterObj.settled = true;
+          return;
+        }
+      }
+      // angular integration + air resistance
+      omega *= 0.995;
+      angle += omega;
+      // apply transform relative to starting position
+      var tx = x - r.left;
+      var ty = y - r.top;
+      clone.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) rotate(' + angle.toFixed(2) + 'deg)';
+      // update letterObj position for collision checks
+      letterObj.x = x;
+      letterObj.y = y;
+      letterObj.vx = vx;
+      letterObj.vy = vy;
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+    
+    // Add click handler to original clone for duplication
+    clone.addEventListener('click', function(e){
+      e.stopPropagation();
+      duplicateFallenLetter();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    wrapBioLetters();
+    
+    // Handle clicking on h1 to add a letter to the bio
+    var h1 = document.querySelector('h1');
+    if(h1){
+      h1.addEventListener('click', function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        var bio = document.querySelector('.bio');
+        if(bio){
+          var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          var randomLetter = letters[Math.floor(Math.random() * letters.length)];
+          
+          // Create span positioned at top of bio
+          var newSpan = document.createElement('span');
+          newSpan.className = 'fall-letter';
+          newSpan.textContent = randomLetter;
+          newSpan.style.position = 'absolute';
+          newSpan.style.top = '0px';
+          newSpan.style.left = '50%';
+          newSpan.style.transform = 'translateX(-50%)';
+          bio.appendChild(newSpan);
+          
+          // Get its position relative to viewport
+          var r = newSpan.getBoundingClientRect();
+          
+          // Create a fixed-position clone for falling
+          var clone = newSpan.cloneNode(true);
+          clone.className = 'fallen-letter';
+          clone.style.position = 'fixed';
+          clone.style.left = r.left + 'px';
+          clone.style.top = r.top + 'px';
+          clone.style.pointerEvents = 'none';
+          document.body.appendChild(clone);
+          
+          // Hide the original span
+          newSpan.style.visibility = 'hidden';
+          
+          // Now run physics on the clone
+          var bioRect = bio.getBoundingClientRect();
+          var x = r.left;
+          var y = r.top;
+          var w = r.width;
+          var h = r.height;
+          var vx = (Math.random() - 0.5) * 2.6;
+          var vy = 0;
+          var angle = (Math.random()*40 - 20);
+          var omega = (Math.random() - 0.5) * 0.6;
+          var g = 0.55 + Math.random()*0.4;
+          var bounce = 0.7 + Math.random()*0.15;
+          var floor = bioRect.top + bioRect.height - (h/2) - 4;
+          var leftBound = bioRect.left;
+          var rightBound = bioRect.right - w;
+          var settled = false;
+          var letterObj = { x: x, y: y, w: w, h: h, vx: vx, vy: vy };
+          fallingLetters.push(letterObj);
+          
+          function spawnStep(){
+            if(settled) return;
+            vy += g;
+            x += vx;
+            y += vy;
+            if(x < leftBound){ x = leftBound; vx = -vx * 0.6; }
+            if(x > rightBound){ x = rightBound; vx = -vx * 0.6; }
+            for(var i=0; i<fallingLetters.length; i++){
+              var other = fallingLetters[i];
+              if(other === letterObj) continue;
+              var dx = (x + w/2) - (other.x + other.w/2);
+              var dy = (y + h/2) - (other.y + other.h/2);
+              var dist = Math.sqrt(dx*dx + dy*dy);
+              var minDist = Math.max(w, h) * 0.6;
+              if(dist < minDist && dist > 0){
+                var force = (minDist - dist) * 0.15;
+                var nx = dx / dist;
+                var ny = dy / dist;
+                vx += nx * force;
+                vy += ny * force;
+                other.vx -= nx * force * 0.5;
+                other.vy -= ny * force * 0.5;
+              }
+            }
+            if(y >= floor){
+              y = floor;
+              vy = -vy * bounce;
+              vx = vx * 0.9;
+              omega = -omega * 0.6 + (vx * 0.06);
+              if(Math.abs(vy) < 2 && Math.abs(vx) < 0.6){
+                settled = true;
+                clone.style.left = x + 'px';
+                clone.style.top = y + 'px';
+                clone.style.transform = 'translate(0px,0px) rotate(' + angle.toFixed(1) + 'deg)';
+                clone.style.pointerEvents = 'auto';
+                letterObj.settled = true;
+                clone.addEventListener('click', function(e){
+                  e.stopPropagation();
+                  // duplicate handler would go here if needed
+                });
+                return;
+              }
+            }
+            omega *= 0.995;
+            angle += omega;
+            var tx = x - r.left;
+            var ty = y - r.top;
+            clone.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) rotate(' + angle.toFixed(2) + 'deg)';
+            letterObj.x = x;
+            letterObj.y = y;
+            letterObj.vx = vx;
+            letterObj.vy = vy;
+            requestAnimationFrame(spawnStep);
+          }
+          requestAnimationFrame(spawnStep);
+        }
+      });
+    }
+    
+    document.body.addEventListener('click', function(e){
+      var sel = window.getSelection && window.getSelection();
+      if(sel && !sel.isCollapsed){
+        var bio = e.target.closest && e.target.closest('.bio');
+        var spans = [];
+        if(bio){
+          bio.querySelectorAll('.fall-letter').forEach(function(sp){ if(sel.containsNode(sp, true) && sp.style.visibility !== 'hidden') spans.push(sp); });
+        } else {
+          document.querySelectorAll('.bio .fall-letter').forEach(function(sp){ if(sel.containsNode(sp, true) && sp.style.visibility !== 'hidden') spans.push(sp); });
+        }
+        if(spans.length){
+          e.preventDefault();
+          e.stopPropagation();
+          spans.forEach(function(sp){ makeFallenLetter(sp); });
+          try{ sel.removeAllRanges(); }catch(_){ }
+          return;
+        }
+      }
+      var s = e.target.closest && e.target.closest('.fall-letter');
+      if(!s) return;
+      // prevent header shatter interference
+      e.stopPropagation();
+      makeFallenLetter(s);
+    });
+  });
+})();
+</script>
+<script>
+;(function(){
+  // Easter egg: Click "fuck i talk too much." to navigate to YAP page
+  var yapElement = document.getElementById('yap-easter-egg');
+  if(yapElement){
+    yapElement.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = 'yap.html';
+    });
+  }
+})();
+</script>

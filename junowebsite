@@ -1,0 +1,158 @@
+<head>
+  <meta charset="UTF-8">
+  <title>thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+        background-image: url('Assets/Images/background.png'); /* Local path or full URL */
+    background-repeat: no-repeat;           /* Prevents the image from tiling */
+    background-size: cover;                 /* Scales image to cover the whole page */
+    background-position: center;            /* Centers the image */
+    background-attachment: fixed;          /* Keeps image fixed while scrolling */
+    
+      --text: #ffffff;
+      --muted: #ffffff;
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+  
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid #e5e5e5;
+      
+    }
+
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      justify-content: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--link);
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: var(--max-width);
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      margin-bottom: 24px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+      margin: 32px auto;
+    }
+
+    /* Logo sizing: change `width` here to resize the Cheapwine logo */
+    .logo {
+      width: 240px; /* adjust this value (px, %, vw) to change size */
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 24px auto;
+    }
+
+    footer {
+      max-width: var(--max-width);
+      margin: 64px auto 32px;
+      padding: 0 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="#">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="#">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="#">Self-Archive</a>
+
+    </nav>
+  </header>
+
+  <main>
+    <h1 p style="text-align: center;">Welcome</h1>
+
+
+    <p>
+      This site is a simple entry point. basically one big blog of shit i like to do or whatever
+    </p>
+
+    <p>
+      Art, Chords to Cheapwine Songs, And other things of my liking will probably be here.
+    </p>
+
+      <img src="Assets/Images/CWHLogo.png" alt="Cheapwine logo or whatever" class="logo">
+
+    <p class="muted">
+      This page is intentionally minimal, Also Because Im A Lazy Bum.
+    </p>
+  </main>
+
+    footer {
+      max-width: var(--max-width);
+      margin: 64px auto 32px;
+      padding: 0 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Content fade-in */
+    main { opacity: 0; transform: translateY(6px); transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }

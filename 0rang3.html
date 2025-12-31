@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>0rang3 — Secret</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      background-image: url('Assets/Images/grave.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      --text: #ff0000;
+      --muted: rgba(255, 0, 0, 0.85);
+      --link: #ff6600;
+      --max-width: 720px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background: transparent;
+    }
+    header { padding: 24px; border-bottom: 1px solid #ff0000; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 30px 40px; border: 3px solid #fff; border-radius: 15px; background: rgba(255, 255, 255, 0.15); }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; }
+    p { margin-bottom: 20px; color: var(--muted); }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+    .quote { border: 2px solid #fff; border-radius: 8px; padding: 15px 20px; background: rgba(255, 255, 255, 0.5); display: inline-block; margin: 20px auto; }
+    main { opacity: 1; transition: opacity 380ms ease-out; }
+    body.loaded main { opacity: 1; }
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>The Grave Of SilasM2014YT</h1>
+    <p>SilasM2014YT, You Will Be Missed. you left us too soon.</p>
+    <p></p>
+    <p style="margin-top: 40px; color: #666;">we loved you...</p>
+  </main>
+
+  <footer>
+    <p class="muted quote">"You Cannot Die In The City Unless You-" -  SilasM2014YT</p>
+  </footer>
+</body>
+
+<div id="page-blink"></div>
+<script>
+;(function(){
+  var overlay = document.getElementById('page-blink');
+  document.documentElement.classList.remove('preload');
+  overlay.style.opacity = '0';
+  window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if(!a) return;
+    var href = a.getAttribute('href');
+    if(!href) return;
+    if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+    e.preventDefault();
+    overlay.style.opacity = '1';
+    setTimeout(function(){ window.location = href; }, 260);
+  });
+})();
+</script>
+</body>
+</html>

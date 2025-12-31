@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YAP — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: transparent;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.85);
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background-image: url('Assets/Images/background.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: 100%; margin: 48px auto; padding: 0 24px; text-align: center; min-height: 600px; position: relative; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; color: #fff; }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+
+    /* Content fade-in */
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+
+    /* Page transitions: opaque black overlay */
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+    
+    /* Header shatter styles */
+    .shatter-clone { position: absolute; pointer-events: none; left: 0; top: 0; transform-origin: center; transition: transform 900ms cubic-bezier(.1,.7,.1,1), opacity 900ms linear; will-change: transform, opacity; white-space: pre; }
+    .shatter-hidden { visibility: hidden; }
+
+    /* YAP text positioning */
+    .yap-text {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      font-size: 48px;
+      font-weight: bold;
+      opacity: 0.6;
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      transform: rotate(var(--angle, 0deg));
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  <main>
+    <h1>YAP</h1>
+    <p>YAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAPYAP</p>
+  </main>
+  <footer>
+    <p class="muted"><a href="about.html">back to about</a></p>
+  </footer>
+</body>
+
+<div id="page-blink"></div>
+<script>
+;(function(){
+  var overlay = document.getElementById('page-blink');
+  document.documentElement.classList.remove('preload');
+  overlay.style.opacity = '0';
+  window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if(!a) return;
+    var href = a.getAttribute('href');
+    if(!href) return;
+    if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+    e.preventDefault();
+    overlay.style.opacity = '1';
+    setTimeout(function(){ window.location = href; }, 260);
+  });
+})();
+</script>
+<script>
+;(function(){
+  function shatterElementText(el){
+    if(!el || el.dataset.shattering) return;
+    var text = el.textContent || '';
+    if(!text.trim()) return;
+    el.dataset.shattering = '1';
+    var original = el.innerHTML;
+    el.innerHTML = '';
+    var spans = [];
+    for(var i=0;i<text.length;i++){
+      var ch = text[i];
+      var s = document.createElement('span');
+      s.textContent = ch;
+      s.style.whiteSpace = 'pre';
+      s.className = 'shatter-char';
+      el.appendChild(s);
+      spans.push(s);
+    }
+    var clones = [];
+    spans.forEach(function(s){
+      var r = s.getBoundingClientRect();
+      var c = s.cloneNode(true);
+      c.className = 'shatter-clone';
+      c.style.left = r.left + 'px';
+      c.style.top = r.top + 'px';
+      c.style.width = r.width + 'px';
+      c.style.height = r.height + 'px';
+      c.style.font = getComputedStyle(s).font;
+      c.style.color = getComputedStyle(s).color;
+      document.body.appendChild(c);
+      clones.push(c);
+      s.style.visibility = 'hidden';
+    });
+    clones.forEach(function(c){
+      var angle = Math.random()*Math.PI*2;
+      var dist = 60 + Math.random()*260;
+      var x = Math.cos(angle)*dist;
+      var y = Math.sin(angle)*dist + 40;
+      var rot = (Math.random()*360-180) + 'deg';
+      requestAnimationFrame(function(){
+        c.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + rot + ')';
+        c.style.opacity = '0';
+      });
+    });
+    setTimeout(function(){
+      clones.forEach(function(c){ if(c.parentNode) c.parentNode.removeChild(c); });
+      el.innerHTML = original;
+      delete el.dataset.shattering;
+    }, 1100);
+  }
+
+  document.querySelectorAll('header').forEach(function(header){
+    header.addEventListener('click', function(e){
+      var tgt = e.target.closest ? e.target.closest('a, h1') : null;
+      if(!tgt) return;
+      if(tgt.tagName === 'A' && tgt.getAttribute('href') && !tgt.getAttribute('href').startsWith('#')){
+        e.preventDefault();
+      }
+      shatterElementText(tgt);
+    });
+  });
+})();
+</script>
+<script>
+;(function(){
+  // Generate random YAP text across the page
+  function generateYapText(){
+    var yapCount = 30 + Math.floor(Math.random() * 40); // 30-70 YAP texts
+    var viewportWidth = window.innerWidth;
+    var viewportHeight = window.innerHeight;
+    
+    for(var i = 0; i < yapCount; i++){
+      var yap = document.createElement('div');
+      yap.className = 'yap-text';
+      yap.textContent = 'YAP';
+      
+      // Random position
+      var x = Math.random() * (viewportWidth - 200);
+      var y = Math.random() * (viewportHeight - 200);
+      yap.style.left = x + 'px';
+      yap.style.top = y + 'px';
+      
+      // Random rotation
+      var angle = Math.random() * 360;
+      yap.style.setProperty('--angle', angle + 'deg');
+      
+      // Random opacity between 0.3 and 0.8
+      var opacity = 0.3 + Math.random() * 0.5;
+      yap.style.opacity = opacity;
+      
+      // Random color variations
+      var colors = [
+        'rgba(255, 255, 255, 0.8)',
+        'rgba(200, 255, 200, 0.8)',
+        'rgba(255, 200, 255, 0.8)',
+        'rgba(200, 200, 255, 0.8)',
+        'rgba(255, 255, 200, 0.8)'
+      ];
+      var color = colors[Math.floor(Math.random() * colors.length)];
+      yap.style.color = color;
+      
+      // Random font sizes (between 24px and 72px)
+      var fontSize = 24 + Math.random() * 48;
+      yap.style.fontSize = fontSize + 'px';
+      
+      // Random blur/glow effect
+      var blur = Math.random() * 15;
+      yap.style.textShadow = '0 0 ' + blur + 'px rgba(255, 255, 255, 0.5)';
+      
+      document.body.appendChild(yap);
+    }
+  }
+  
+  // Generate YAP text on page load
+  window.addEventListener('DOMContentLoaded', function(){
+    generateYapText();
+  });
+  
+  // Also regenerate if page is already loaded
+  if(document.readyState === 'complete' || document.readyState === 'interactive'){
+    generateYapText();
+  }
+})();
+</script>
+</html>
