@@ -125,6 +125,15 @@
     .remove-btn:hover {
       background: rgba(255,100,100,0.8);
     }
+    .edit-btn {
+      background: rgba(100,150,255,0.6);
+      font-size: 11px;
+      padding: 4px 8px;
+      margin-right: 6px;
+    }
+    .edit-btn:hover {
+      background: rgba(100,150,255,0.8);
+    }
     .copy-btn {
       margin-top: 12px;
       background: rgba(58, 156, 255, 0.8);
@@ -282,6 +291,7 @@
           <strong>${escapeHtml(post.title)}</strong>
           <span class="preview-date">Posted on ${escapeHtml(post.date)}</span>
           <span class="preview-content">${escapeHtml(post.content.split('\n')[0])}</span>
+          <button class="edit-btn" onclick="editPost(${idx})">Edit</button>
           <button class="remove-btn" onclick="removePost(${idx})">Remove</button>
         </div>`;
       });
@@ -293,6 +303,15 @@
     function removePost(index) {
       blogPosts.splice(index, 1);
       updatePreview();
+    }
+
+    function editPost(index) {
+      const post = blogPosts[index];
+      document.getElementById('post-title').value = post.title;
+      document.getElementById('post-content').value = post.content;
+      document.getElementById('post-date').value = post.date;
+      removePost(index);
+      document.getElementById('post-title').focus();
     }
 
     function escapeHtml(text) {
