@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blog — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: transparent;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.85);
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background-image: url('Assets/Images/background.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 0 24px; text-align: center; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; color: #fff; }
+    p { margin-bottom: 12px; color: var(--muted); }
+    .blog-post { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 8px; color: #fff; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; margin-bottom: 20px; text-align: left; }
+    .blog-post h2 { font-size: 20px; margin-top: 0; margin-bottom: 12px; color: #fff; }
+    .blog-date { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="blog.html">Blog</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Blog</h1>
+    <div class="blog-post">
+      <h2>Testing, Testing!</h2>
+      <div class="blog-date">Posted on January 10, 2026</div>
+      <p>i made a mockup pose maker using html so i can easily update this fuck ass blog, if you see this, it worked! Hooray!!!</p>
+    </div>
+    <div class="blog-post">
+      <h2>Patreon!</h2>
+      <div class="blog-date">Posted on January 10, 2026</div>
+      <p>Ive set up a Patreon! If youd like to support my work and give me a quick buck, please check it out (Once it actually comes out)</p>
+    </div>
+    <div class="blog-post">
+      <h2>Welcome to my awesome blog thing!</h2>
+      <div class="blog-date">Posted on January 10, 2026</div>
+      <p>Welcome to my blog! I'll be posting about music, art, projects, and whatever else I'm working on/p&gt;</p>
+    </div>
+  </main>
+  <footer>
+    <p class="muted">thanks for reading!</p>
+  </footer>
+</body>
+
+</html>

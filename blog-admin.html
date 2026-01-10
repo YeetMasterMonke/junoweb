@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blog Admin — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: transparent;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.85);
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background-image: url('Assets/Images/background.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 0 24px; text-align: left; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; color: #fff; text-align: center; }
+    p { margin-bottom: 12px; color: var(--muted); }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-weight: bold;
+    }
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    button {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 10px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      transition: background 200ms ease;
+    }
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .output-section {
+      background: rgba(0,0,0,0.5);
+      padding: 18px;
+      border-radius: 8px;
+      margin-top: 32px;
+      display: none;
+    }
+    .output-section.show {
+      display: block;
+    }
+    .preview-item {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .preview-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .preview-date {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .preview-content {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .remove-btn {
+      background: rgba(255,100,100,0.6);
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+    .remove-btn:hover {
+      background: rgba(255,100,100,0.8);
+    }
+    .copy-btn {
+      margin-top: 12px;
+      background: rgba(58, 156, 255, 0.8);
+    }
+    .copy-btn:hover {
+      background: rgba(58, 156, 255, 1);
+    }
+    
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="blog.html">Blog</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  
+  <main>
+    <h1>Blog Post Creator</h1>
+    
+    <div class="form-group">
+      <label for="post-title">Post Title</label>
+      <input type="text" id="post-title" placeholder="Enter your blog post title">
+    </div>
+    
+    <div class="form-group">
+      <label for="post-content">Post Content</label>
+      <textarea id="post-content" placeholder="Write your blog post content here..."></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="post-date">Date (leave blank for today)</label>
+      <input type="text" id="post-date" placeholder="e.g., January 10, 2026">
+    </div>
+    
+    <button onclick="generatePost()">Add Post to Blog</button>
+    
+    <div id="preview-section" class="output-section">
+      <h2 style="text-align: left; margin-top: 0;">Blog Preview</h2>
+      <div id="blog-preview" style="background: rgba(0,0,0,0.7); padding: 12px; border-radius: 4px; text-align: left; max-height: 400px; overflow-y: auto;"></div>
+      <button class="copy-btn" onclick="saveBlogNow()" style="background: rgba(76, 175, 80, 0.8);">Save to blog.html</button>
+      <div id="save-status" style="margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.7); display: none;"></div>
+    </div>
+  </main>
+  
+  <footer>
+    <p class="muted">psst... this is just for you :)</p>
+  </footer>
+
+  <script>
+    let blogPosts = [];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      loadBlogPosts();
+    });
+
+    function loadBlogPosts() {
+      fetch('blog.html')
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const blogPostDivs = doc.querySelectorAll('.blog-post');
+          
+          blogPosts = [];
+          
+          blogPostDivs.forEach(postDiv => {
+            const h2s = postDiv.querySelectorAll('h2');
+            const dates = postDiv.querySelectorAll('.blog-date');
+            
+            h2s.forEach((h2, index) => {
+              const title = h2.textContent.trim();
+              const dateDiv = dates[index];
+              const dateText = dateDiv ? dateDiv.textContent.replace('Posted on ', '').trim() : 'Unknown date';
+              
+              let content = [];
+              let sibling = h2.nextElementSibling;
+              while (sibling && !sibling.classList.contains('blog-date')) {
+                sibling = sibling.nextElementSibling;
+              }
+              if (sibling) {
+                sibling = sibling.nextElementSibling;
+                while (sibling && sibling.tagName === 'P') {
+                  content.push(sibling.textContent.trim());
+                  sibling = sibling.nextElementSibling;
+                }
+              }
+              
+              if (title) {
+                blogPosts.push({
+                  title: title,
+                  content: content.join('\n'),
+                  date: dateText
+                });
+              }
+            });
+          });
+          
+          updatePreview();
+        })
+        .catch(err => console.log('Could not load blog.html'));
+    }
+
+    function formatDate(date) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+
+    function generatePost() {
+      const title = document.getElementById('post-title').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+      let dateStr = document.getElementById('post-date').value.trim();
+      
+      if (!title || !content) {
+        alert('Please fill in both title and content!');
+        return;
+      }
+      
+      if (!dateStr) {
+        dateStr = formatDate(new Date());
+      }
+      
+      blogPosts.unshift({
+        title: title,
+        content: content,
+        date: dateStr
+      });
+      
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-content').value = '';
+      document.getElementById('post-date').value = '';
+      
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const preview = document.getElementById('blog-preview');
+      
+      let html = '';
+      blogPosts.forEach((post, idx) => {
+        html += `<div class="preview-item">
+          <strong>${escapeHtml(post.title)}</strong>
+          <span class="preview-date">Posted on ${escapeHtml(post.date)}</span>
+          <span class="preview-content">${escapeHtml(post.content.split('\n')[0])}</span>
+          <button class="remove-btn" onclick="removePost(${idx})">Remove</button>
+        </div>`;
+      });
+      
+      preview.innerHTML = html || '<p style="color: rgba(255,255,255,0.6);">No posts yet</p>';
+      document.getElementById('preview-section').style.display = 'block';
+    }
+
+    function removePost(index) {
+      blogPosts.splice(index, 1);
+      updatePreview();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function downloadBlog() {
+      saveBlogNow();
+    }
+
+    function saveBlogNow() {
+      if (blogPosts.length === 0) {
+        alert('No posts to save!');
+        return;
+      }
+      
+      let postsHtml = '';
+      blogPosts.forEach(post => {
+        postsHtml += `    <div class="blog-post">\n`;
+        postsHtml += `      <h2>${escapeHtml(post.title)}</h2>\n`;
+        postsHtml += `      <div class="blog-date">Posted on ${escapeHtml(post.date)}</div>\n`;
+        
+        const paragraphs = post.content.split('\n').filter(p => p.trim());
+        paragraphs.forEach(para => {
+          postsHtml += `      <p>${escapeHtml(para)}</p>\n`;
+        });
+        
+        postsHtml += `    </div>\n`;
+      });
+      
+      const fullHtml = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blog — thisisjunoswebsite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: 'Cascadia Mono';
+      src: local('Cascadia Mono'), local('CascadiaMono'), local('Cascadia Code'), local('CascadiaCode');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --bg: transparent;
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.85);
+      --link: #ffffff;
+      --max-width: 720px;
+      --text-align: center;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cascadia Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      text-align: center;
+      background-image: url('Assets/Images/background.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    header { padding: 24px; border-bottom: 1px solid #e5e5e5; margin: 0; }
+    nav { max-width: var(--max-width); margin: 0 auto; display: flex; gap: 20px; font-size: 14px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; }
+    nav a { text-decoration: none; color: var(--link); }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: var(--max-width); margin: 48px auto; padding: 0 24px; text-align: center; }
+    h1 { font-size: 28px; font-weight: normal; margin-bottom: 24px; color: #fff; }
+    p { margin-bottom: 12px; color: var(--muted); }
+    .blog-post { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 8px; color: #fff; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; margin-bottom: 20px; text-align: left; }
+    .blog-post h2 { font-size: 20px; margin-top: 0; margin-bottom: 12px; color: #fff; }
+    .blog-date { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+    footer { max-width: var(--max-width); margin: 64px auto 32px; padding: 0 24px; font-size: 13px; color: var(--muted); }
+    main { opacity: 1; transform: none; transition: opacity 380ms ease-out, transform 380ms ease-out; }
+    body.loaded main { opacity: 1; transform: none; }
+    #page-blink { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 260ms linear; }
+    html.preload #page-blink { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="blog.html">Blog</a>
+      <a href="chords.html">Chords</a>
+      <a href="cheapwine.html">Cheapwine Hangover</a>
+      <a href="socials.html">Socials</a>
+      <a href="projects.html">Projects</a>
+      <a href="music.html">Music</a>
+      <a href="art.html">Art</a>
+      <a href="self-archive.html">Self-Archive</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Blog</h1>
+${postsHtml}  </main>
+  <footer>
+    <p class="muted">thanks for reading!</p>
+  </footer>
+</body>
+
+</html>`;
+      
+      // Send to server to save
+      const statusDiv = document.getElementById('save-status');
+      statusDiv.style.display = 'block';
+      statusDiv.textContent = 'Saving...';
+      statusDiv.style.color = 'rgba(255,255,255,0.7)';
+
+      fetch('/api/save-blog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ html: fullHtml })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          statusDiv.textContent = '✓ Blog saved successfully!';
+          statusDiv.style.color = 'rgba(76, 175, 80, 1)';
+          setTimeout(() => {
+            statusDiv.style.display = 'none';
+          }, 3000);
+        } else {
+          statusDiv.textContent = '✗ Error: ' + data.error;
+          statusDiv.style.color = 'rgba(255,100,100,1)';
+        }
+      })
+      .catch(err => {
+        statusDiv.textContent = '✗ Error: ' + err.message + ' (Make sure the server is running!)';
+        statusDiv.style.color = 'rgba(255,100,100,1)';
+      });
+    }
+
+    document.getElementById('post-title').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') generatePost();
+    });
+    document.getElementById('post-date').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') generatePost();
+    });
+  </script>
+</body>
+</html>
