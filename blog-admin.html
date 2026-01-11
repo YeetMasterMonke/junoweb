@@ -461,5 +461,27 @@ ${postsHtml}  </main>
       if (e.key === 'Enter') generatePost();
     });
   </script>
+
+  <div id="page-blink"></div>
+  <script>
+  ;(function(){
+    var overlay = document.getElementById('page-blink');
+    // ensure hidden on load
+    document.documentElement.classList.remove('preload');
+    overlay.style.opacity = '0';
+    window.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('loaded'); });
+    // handle link clicks
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a');
+      if(!a) return;
+      var href = a.getAttribute('href');
+      if(!href) return;
+      if(href.indexOf('#') === 0 || a.target === '_blank' || href.startsWith('javascript:')) return;
+      e.preventDefault();
+      overlay.style.opacity = '1';
+      setTimeout(function(){ window.location = href; }, 260);
+    });
+  })();
+  </script>
 </body>
 </html>
